@@ -1,0 +1,3 @@
+﻿                case %X%:
+                    dx7_voice_render_alg_%X%(instance, outx, sample_count);
+                    break;

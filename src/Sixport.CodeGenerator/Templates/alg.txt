@@ -1,0 +1,207 @@
+﻿        public void dx7_voice_render_alg_%X%(hexter_instance instance, double[] outx, UInt64 sample_count)
+        {
+			UInt64 sample;
+            Int32 i;
+            Int64 i64;
+            Int32 output;
+
+            if ((this.last_port_volume!=instance.volume) || (this.last_cc_volume != instance.cc_volume))
+            {
+                dx7_voice_recalculate_volume(instance);
+            }
+
+			dx7_op op_1 = this.op[Constants.OP_1];
+			dx7_op op_2 = this.op[Constants.OP_2];
+			dx7_op op_3 = this.op[Constants.OP_3];
+			dx7_op op_4 = this.op[Constants.OP_4];
+			dx7_op op_5 = this.op[Constants.OP_5];
+			dx7_op op_6 = this.op[Constants.OP_6];
+
+			dx7_op_eg op_1_eg = this.op[Constants.OP_1].eg;
+			dx7_op_eg op_2_eg = this.op[Constants.OP_2].eg;
+			dx7_op_eg op_3_eg = this.op[Constants.OP_3].eg;
+			dx7_op_eg op_4_eg = this.op[Constants.OP_4].eg;
+			dx7_op_eg op_5_eg = this.op[Constants.OP_5].eg;
+			dx7_op_eg op_6_eg = this.op[Constants.OP_6].eg;
+
+            for (sample = 0; sample < sample_count; sample++)
+            {
+                 /* calculate amplitude modulation amounts */
+                i = (Int32)(((Int64)(this.amp_mod_lfo_amd_value) * (Int64)(this.lfo_delay_value)) >> Constants.FP_SHIFT);
+                i = this.amp_mod_env_value + (Int32)(((Int64)(i + this.amp_mod_lfo_mods_value) * (Int64)(instance.lfo_buffer[sample])) >> Constants.FP_SHIFT);
+                i64 = (Int64)(i);
+
+                ampmod[3] = i;
+                ampmod[2] = (Int32)((i64 * Constants.ampmod2) >> Constants.FP_SHIFT);
+                ampmod[1] = (Int32)((i64 * Constants.ampmod1) >> Constants.FP_SHIFT);
+
+				%OUTPUT%
+
+                /* this.volume_value contains a scaling factor for the number of carriers */
+
+                /* mix voice output into output buffer */
+                outx[sample] += (((double)output) * Constants.FP_TO_FLOAT_DOUBLE) * ((double)this.volume_value);
+
+                /* update runtime parameters for next sample */
+				%OP_INC%
+
+                /*op_6.phase += op_6.phase_increment;
+                op_5.phase += op_5.phase_increment;
+                op_4.phase += op_4.phase_increment;
+                op_3.phase += op_3.phase_increment;
+                op_2.phase += op_2.phase_increment;
+                op_1.phase += op_1.phase_increment;
+
+				op_6_eg.value += op_6_eg.increment;
+				if (--op_6_eg.duration == 0)
+				{
+					if (op_6_eg.mode != dx7_eg_mode.DX7_EG_RUNNING)
+					{
+						op_6_eg.duration = -1;
+					}
+
+					if (op_6_eg.in_precomp != 0)
+					{
+						op_6_eg.in_precomp = 0;
+						op_6_eg.duration = op_6_eg.postcomp_duration;
+						op_6_eg.increment = op_6_eg.postcomp_increment;
+					}
+					else
+					{
+						op_6_eg.dx7_op_eg_set_next_phase(instance);
+					}
+				}
+
+				op_5_eg.value += op_5_eg.increment;
+				if (--op_5_eg.duration == 0)
+				{
+					if (op_5_eg.mode != dx7_eg_mode.DX7_EG_RUNNING)
+					{
+						op_5_eg.duration = -1;
+					}
+
+					if (op_5_eg.in_precomp != 0)
+					{
+						op_5_eg.in_precomp = 0;
+						op_5_eg.duration = op_5_eg.postcomp_duration;
+						op_5_eg.increment = op_5_eg.postcomp_increment;
+					}
+					else
+					{
+						op_5_eg.dx7_op_eg_set_next_phase(instance);
+					}
+				}
+
+				op_4_eg.value += op_4_eg.increment;
+				if (--op_4_eg.duration == 0)
+				{
+					if (op_4_eg.mode != dx7_eg_mode.DX7_EG_RUNNING)
+					{
+						op_4_eg.duration = -1;
+					}
+
+					if (op_4_eg.in_precomp != 0)
+					{
+						op_4_eg.in_precomp = 0;
+						op_4_eg.duration = op_4_eg.postcomp_duration;
+						op_4_eg.increment = op_4_eg.postcomp_increment;
+					}
+					else
+					{
+						op_4_eg.dx7_op_eg_set_next_phase(instance);
+					}
+				}
+
+				op_3_eg.value += op_3_eg.increment;
+				if (--op_3_eg.duration == 0)
+				{
+					if (op_3_eg.mode != dx7_eg_mode.DX7_EG_RUNNING)
+					{
+						op_3_eg.duration = -1;
+					}
+
+					if (op_3_eg.in_precomp != 0)
+					{
+						op_3_eg.in_precomp = 0;
+						op_3_eg.duration = op_3_eg.postcomp_duration;
+						op_3_eg.increment = op_3_eg.postcomp_increment;
+					}
+					else
+					{
+						op_3_eg.dx7_op_eg_set_next_phase(instance);
+					}
+				}
+
+				op_2_eg.value += op_2_eg.increment;
+				if (--op_2_eg.duration == 0)
+				{
+					if (op_2_eg.mode != dx7_eg_mode.DX7_EG_RUNNING)
+					{
+						op_2_eg.duration = -1;
+					}
+
+					if (op_2_eg.in_precomp != 0)
+					{
+						op_2_eg.in_precomp = 0;
+						op_2_eg.duration = op_2_eg.postcomp_duration;
+						op_2_eg.increment = op_2_eg.postcomp_increment;
+					}
+					else
+					{
+						op_2_eg.dx7_op_eg_set_next_phase(instance);
+					}
+				}
+
+				op_1_eg.value += op_1_eg.increment;
+				if (--op_1_eg.duration == 0)
+				{
+					if (op_1_eg.mode != dx7_eg_mode.DX7_EG_RUNNING)
+					{
+						op_1_eg.duration = -1;
+					}
+
+					if (op_1_eg.in_precomp != 0)
+					{
+						op_1_eg.in_precomp = 0;
+						op_1_eg.duration = op_1_eg.postcomp_duration;
+						op_1_eg.increment = op_1_eg.postcomp_increment;
+					}
+					else
+					{
+						op_1_eg.dx7_op_eg_set_next_phase(instance);
+					}
+				}*/
+
+                if (this.amp_mod_env_duration != 0)
+                {
+                    this.amp_mod_env_value += this.amp_mod_env_increment;
+                    this.amp_mod_env_duration--;
+                }
+                if (this.amp_mod_lfo_mods_duration != 0)
+                {
+                    this.amp_mod_lfo_mods_value += this.amp_mod_lfo_mods_increment;
+                    this.amp_mod_lfo_mods_duration--;
+                }
+                if (this.amp_mod_lfo_amd_duration != 0)
+                {
+                    this.amp_mod_lfo_amd_value += this.amp_mod_lfo_amd_increment;
+                    this.amp_mod_lfo_amd_duration--;
+                }
+                if (this.lfo_delay_duration != 0)
+                {
+                    this.lfo_delay_value += this.lfo_delay_increment;
+                    if (--this.lfo_delay_duration == 0)
+                    {
+                        i = ++this.lfo_delay_segment;
+                        this.lfo_delay_duration = instance.lfo_delay_duration[i];
+                        this.lfo_delay_value = instance.lfo_delay_value[i];
+                        this.lfo_delay_increment = instance.lfo_delay_increment[i];
+                    }
+                }
+                if (this.volume_duration != 0)
+                {
+                    this.volume_value += this.volume_increment;
+                    this.volume_duration--;
+                }
+            }
+		}

@@ -1,0 +1,56 @@
+﻿/* Sixport - .Net port of the hexter DSSI software synthesizer plugin
+ * 
+ * .Net port, algorithm specific fast rendering Copyright (C) 2011, Balint Pfliegel
+ * Based on hexter, Copyright (C) 2004, 2009 Sean Bolton and others.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301 USA.
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Sixport
+{
+    public partial class dx7_voice
+    {
+	    public void dx7_voice_render_fast(hexter_instance instance, double[] outx, UInt64 sample_count)
+        {
+            switch (this.algorithm)
+            {
+				%SUBS1%
+            }
+        }
+
+		%ALGS1%
+
+		public void dx7_voice_render_fast_specific(hexter_instance instance, double[] outLeft, double[] outRight, UInt64 sample_count, UInt64 sample_offset, double pan_angle, double amplitude)
+        {
+            if (pan_angle > 90.0) { pan_angle = 90.0; }
+            if (pan_angle < -90.0) { pan_angle = -90.0; }
+            double sin_coef = Math.Sin((pan_angle) * (Constants.M_PI / 180.0));
+            double cos_coef = Math.Cos((pan_angle) * (Constants.M_PI / 180.0));
+
+            switch (this.algorithm)
+            {
+				%SUBS2%
+            }
+        }
+
+		%ALGS2%
+    }
+}

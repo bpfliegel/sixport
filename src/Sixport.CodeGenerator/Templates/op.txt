@@ -1,0 +1,21 @@
+﻿				op_%X%.phase += op_%X%.phase_increment;
+				op_%X%_eg.value += op_%X%_eg.increment;
+				if (--op_%X%_eg.duration == 0)
+				{
+					if (op_%X%_eg.mode != dx7_eg_mode.DX7_EG_RUNNING)
+					{
+						op_%X%_eg.duration = -1;
+					}
+
+					if (op_%X%_eg.in_precomp != 0)
+					{
+						op_%X%_eg.in_precomp = 0;
+						op_%X%_eg.duration = op_%X%_eg.postcomp_duration;
+						op_%X%_eg.increment = op_%X%_eg.postcomp_increment;
+					}
+					else
+					{
+						op_%X%_eg.dx7_op_eg_set_next_phase(instance);
+					}
+				}
+

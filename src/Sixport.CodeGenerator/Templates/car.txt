@@ -1,0 +1,13 @@
+﻿Int32 index_%X%, amp_%X%, outx_%X%, final_%X%;
+Int32 eg_value_%X% = op_%X%_eg.value - ampmod[op_%X%.amp_mod_sens];
+if (eg_value_%X% == 0) { final_%X% = 0; } else {
+Int32 phase_%X% = (Int32)op_%X%.phase%_p%;
+index_%X% = (eg_value_%X% >> Constants.FP_SHIFT);
+amp_%X% = Data.dx7_voice_eg_ol_to_amp_table[index_%X% + 128];
+amp_%X% += (Int32)(((Int64)(Data.dx7_voice_eg_ol_to_amp_table[index_%X% + 129] - amp_%X%) * (Int64)(eg_value_%X% & Constants.FP_MASK)) >> Constants.FP_SHIFT);
+index_%X% = (phase_%X% >> Constants.FP_TO_SINE_SHIFT) & Constants.SINE_MASK;
+outx_%X% = Data.dx7_voice_sin_table[index_%X%];
+outx_%X% += (Int32)((((Int64)(Data.dx7_voice_sin_table[index_%X% + 1] - outx_%X%) *
+            (Int64)(phase_%X% & Constants.FP_TO_SINE_MASK)) >>
+        (Constants.FP_SHIFT_PLUS_FP_TO_SINE_SHIFT)));
+final_%X% = (Int32)(((Int64)amp_%X% * (Int64)outx_%X%) >> Constants.FP_SHIFT); }

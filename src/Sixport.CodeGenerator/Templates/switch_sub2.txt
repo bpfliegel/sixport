@@ -1,0 +1,4 @@
+﻿                case %X%:
+                    dx7_voice_render_alg_specific_%X%(instance, outLeft, outRight, sample_count, sample_offset, sin_coef, cos_coef, amplitude);
+                    break;
+
